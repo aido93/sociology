@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use 5.20.2;
-
+#use utf8;
 open my $file_m, '<', $ARGV[0] or die "Невозможно открыть файл: $!\n";
 open my $file_w, '<', $ARGV[1] or die "Невозможно открыть файл: $!\n";
 
@@ -11,15 +11,16 @@ my $num_str_m;
 my @num_str_array_m;
 my @all_str_m;
 
-while(my $line=<$file_m>)
+while(<$file_m>)
 {
-	chomp $line;
-	if ($line=~/^0,/)
+	chomp;
+	~s/\r//g;
+	if (/^0,/)
 	{
 		push(@num_str_array_m, $num_str_m);
 	}
 	$num_str_m++;
-	push(@all_str_m, $line);
+	push(@all_str_m, $_);
 }
 
 close $file_m;
@@ -28,23 +29,24 @@ my $num_str_w;
 my @num_str_array_w;
 my @all_str_w;
 
-while(my $line=<$file_w>)
+while(<$file_w>)
 {
-	chomp $line;
-	if ($line=~/^0,/)
+	chomp;
+	~s/\r//g;
+	if (/^0,/)
 	{
 		push(@num_str_array_w, $num_str_w);
 	}
 	$num_str_w++;
-	push(@all_str_w, $line);
+	push(@all_str_w, $_);
 }
 
 close $file_w;
 
-foreach $a (@num_str_array_m)
+foreach my $x (@num_str_array_m)
 {
-	$_=$all_str_m[$a-5];
-	s/.*[ \t\n]*$//;
+	$_=$all_str_m[$x-5];
+	s/.*[ \t\n\r]*$//;
 	s/ /\\ /;
 	s/,//;
 	my $b=join( '/' => ("regions_stat",  $_, "full", "man/"));
@@ -65,18 +67,18 @@ foreach $a (@num_str_array_m)
 	print $village_out 	$all_str_m[0];
 	for (my $i=0; $i<18;$i=$i+1)#18 категорий возрастов
 	{
-		print $full_out 	$all_str_m[$a+$i*4].substr($all_str_m[$a+$i*4+1],14);
-		print $city_out 	$all_str_m[$a+$i*4].substr($all_str_m[$a+$i*4+2],20);
-		print $village_out 	$all_str_m[$a+$i*4].substr($all_str_m[$a+$i*4+3],19);
+		print $full_out 	$all_str_m[$x+$i*4].substr($all_str_m[$x+$i*4+1],14);
+		print $city_out 	$all_str_m[$x+$i*4].substr($all_str_m[$x+$i*4+2],20);
+		print $village_out 	$all_str_m[$x+$i*4].substr($all_str_m[$x+$i*4+3],19);
 	}
 	close $full_out;
 	close $city_out;
 	close $village_out;
 }
-foreach $b (@num_str_array_w)
+foreach my $x (@num_str_array_w)
 {
-	$_=$all_str_m[$a-5];
-	s/.*[ \t\n]*$//;
+	$_=$all_str_m[$x-5];
+	s/.*[ \t\n\r]*$//;
 	s/ /\\ /;
 	s/,//;
 	my $b=join( '/' => ("regions_stat",  $_, "full", "woman/"));
@@ -94,9 +96,9 @@ foreach $b (@num_str_array_w)
 	print $village_out 	$all_str_w[0];
 	for (my $i=0; $i<18;$i=$i+1)#18 категорий возрастов
 	{
-		print $full_out 	@all_str_w[$b+$i*4].substr(@all_str_w[$b+$i*4+1],14);
-		print $city_out 	@all_str_w[$b+$i*4].substr(@all_str_w[$b+$i*4+2],20);
-		print $village_out 	@all_str_w[$b+$i*4].substr(@all_str_w[$b+$i*4+3],19);
+		print $full_out 	@all_str_w[$x+$i*4].substr(@all_str_w[$x+$i*4+1],14);
+		print $city_out 	@all_str_w[$x+$i*4].substr(@all_str_w[$x+$i*4+2],20);
+		print $village_out 	@all_str_w[$x+$i*4].substr(@all_str_w[$x+$i*4+3],19);
 	}
 	close $full_out;
 	close $city_out;
